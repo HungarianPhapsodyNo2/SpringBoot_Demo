@@ -1,10 +1,9 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.Product;
 import lombok.*;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductDTO {
 
     private String name;
@@ -13,4 +12,9 @@ public class ProductDTO {
 
     private String description;
 
+    public ProductDTO(Product product) {
+        this.name = product.getName();
+        this.price = product.getPrice();
+        this.description = product.getDescription();
+    }
 }

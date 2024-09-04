@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.*;
+import com.example.demo.dto.ProductDTO;
 import com.example.demo.model.*;
+import com.example.demo.request.AddProductRequest;
+import com.example.demo.response.ApiResponse;
 import com.example.demo.service.product.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,25 +13,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductController {
 
     @Autowired
     private IProductService productService;
 
-    @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestBody ProductDTO productDTO) {
-        Product product = productService.addProduct(
-                productDTO.getName(),
-                productDTO.getPrice(),
-                productDTO.getDescription()
-        );
-        return new ResponseEntity<>(product, HttpStatus.CREATED);
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
+        try {
+            Product product = productService.addProduct(addProductRequest);
+            return ResponseEntity.ok(new ApiResponse("Product added successfully", new ProductDTO(product)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+        }
     }
 
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        List<ProductDTO> productDTOs = products.stream().map(ProductDTO::new).toList();
+        return ResponseEntity.ok(new ApiResponse("Products retrieved successfully", productDTOs));
     }
 
     // Other endpoints

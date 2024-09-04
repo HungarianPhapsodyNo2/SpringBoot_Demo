@@ -21,7 +21,6 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = true)
+    @Column
     private String description;
-
 }
