@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderItem;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class OrderDTO {
 
     private List<OrderItemDTO> orderItemDTOs;
 
-    public OrderDTO(Order order) {
+    public OrderDTO(@NotNull Order order) {
         this.orderItemDTOs = order.getItems().stream().map(OrderItemDTO::new).toList();
     }
 

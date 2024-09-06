@@ -7,7 +7,6 @@ import com.example.demo.response.ApiResponse;
 import com.example.demo.service.product.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,20 +19,20 @@ public class ProductController {
     private IProductService productService;
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest addProductRequest) {
+    public ResponseEntity<ApiResponse<ProductDTO>> addProduct(@RequestBody AddProductRequest addProductRequest) {
         try {
             Product product = productService.addProduct(addProductRequest);
-            return ResponseEntity.ok(new ApiResponse("Product added successfully", new ProductDTO(product)));
+            return ResponseEntity.ok(new ApiResponse<>("Product added successfully", new ProductDTO(product)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+            return ResponseEntity.internalServerError().body(new ApiResponse<>(e.getMessage(), null));
         }
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllProducts() {
+    public ResponseEntity<ApiResponse<List<ProductDTO>>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         List<ProductDTO> productDTOs = products.stream().map(ProductDTO::new).toList();
-        return ResponseEntity.ok(new ApiResponse("Products retrieved successfully", productDTOs));
+        return ResponseEntity.ok(new ApiResponse<>("Products retrieved successfully", productDTOs));
     }
 
     // Other endpoints
