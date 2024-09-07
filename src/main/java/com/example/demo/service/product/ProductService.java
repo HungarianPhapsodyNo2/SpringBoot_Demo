@@ -23,7 +23,6 @@ public class ProductService implements IProductService {
         return productRepository.save(product);
     }
 
-    @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
