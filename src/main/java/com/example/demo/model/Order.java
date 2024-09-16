@@ -1,10 +1,12 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,21 +19,25 @@ public class Order {
     private Long id;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> items;
+    private Set<OrderItem> items;
+
+    @Column(nullable = false)
+    private BigDecimal subTotal;
 
     public Order() {
-        this.items = new ArrayList<>();
+        this.items = new HashSet<>();
+        this.subTotal = BigDecimal.ZERO;
     }
 
-    public void addOrderItem(OrderItem item){
+    public void addItem(OrderItem item) {
         this.items.add(item);
         item.setOrder(this);
+        this.subTotal = this.subTotal.add(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
     }
 
-    public void clearOrderItems(){
-        for (OrderItem item : items){
-            item.setOrder(null);
-        }
-        items.clear();
+    public void removeItem(OrderItem item) {
+        this.items.remove(item);
+        item.setOrder(null);
+        this.subTotal = this.subTotal.subtract(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
     }
 }

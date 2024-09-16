@@ -1,8 +1,9 @@
 package com.example.demo.dto;
 
 import com.example.demo.model.Product;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class ProductDTO {
@@ -11,11 +12,11 @@ public class ProductDTO {
 
     private String name;
 
-    private Double price;
+    private BigDecimal price;
 
     private String description;
 
-    public ProductDTO(@NotNull Product product) {
+    public ProductDTO(Product product) {
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
