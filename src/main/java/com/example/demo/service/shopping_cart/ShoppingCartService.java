@@ -8,23 +8,19 @@ import com.example.demo.repository.ShoppingCartItemRepository;
 import com.example.demo.repository.ShoppingCartRepository;
 import com.example.demo.request.AddCartItemRequest;
 import com.example.demo.service.product.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ShoppingCartService implements IShoppingCartService {
 
-    @Autowired
-    private ShoppingCartRepository shoppingCartRepository;
-
-    @Autowired
-    private ShoppingCartItemRepository shoppingCartItemRepository;
-
-    @Autowired
-    private ProductService productService;
+    private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartItemRepository shoppingCartItemRepository;
+    private final ProductService productService;
 
     @Override
     public ShoppingCart createShoppingCart() {
@@ -98,14 +94,7 @@ public class ShoppingCartService implements IShoppingCartService {
         shoppingCartRepository.save(shoppingCart);
     }
 
-    // might consider implementing this method via a query to avoid iterating over the items
-    // e.g. shoppingCartItemRepository.findByShoppingCartIdAndProductId(shoppingCartId, productId)
     public Optional<ShoppingCartItem> getShoppingCartItem(Long shoppingCartId, Long productId) {
-        /* deprecated
-        return shoppingCart.getItems().stream()
-                 .filter(item -> item.getProduct().getId().equals(productId))
-                 .findFirst();
-         */
         return shoppingCartItemRepository.findByShoppingCartIdAndProductId(shoppingCartId, productId);
     }
 }

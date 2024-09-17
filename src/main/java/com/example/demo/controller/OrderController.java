@@ -5,7 +5,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Order;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.service.order.IOrderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private IOrderService orderService;
+    private final IOrderService orderService;
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<OrderDTO>>> getAllOrders() {

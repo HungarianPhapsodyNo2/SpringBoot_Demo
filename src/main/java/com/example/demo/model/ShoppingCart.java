@@ -7,9 +7,13 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entity representing a shopping cart.
+ * Contains a set of shopping cart items and methods to add or remove items.
+ */
+@Entity
 @Getter
 @Setter
-@Entity
 public class ShoppingCart {
 
     @Id
@@ -17,7 +21,6 @@ public class ShoppingCart {
     private Long id;
 
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
-    @MapKey(name = "product_id")
     private Set<ShoppingCartItem> items;
 
     public ShoppingCart() {

@@ -10,7 +10,7 @@ import com.example.demo.repository.OrderRepository;
 import com.example.demo.request.CheckOutShoppingCartRequest;
 import com.example.demo.service.product.IProductService;
 import com.example.demo.service.shopping_cart.IShoppingCartService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,19 +19,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService implements IOrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
-    @Autowired
-    private IProductService productService;
-
-    @Autowired
-    private IShoppingCartService shoppingCartService;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final IProductService productService;
+    private final IShoppingCartService shoppingCartService;
 
     @Override
     public Order createOrderByProduct(Long productId, Integer quantity) {
@@ -39,17 +33,23 @@ public class OrderService implements IOrderService {
             throw new IllegalArgumentException("Quantity must be greater than 0");
         }
 
-        Product product = productService.getProduct(productId);
+        try {
+            Product product = productService.getProduct(productId);
 
-        Order order = new Order();
-        OrderItem orderItem = OrderItem.builder()
-                .product(product)
-                .quantity(quantity)
-                .unitPrice(product.getPrice())
-                .build();
-        order.addItem(orderItem);
+            Order order = new Order();
+            OrderItem orderItem = OrderItem.builder()
+                    .product(product)
+                    .quantity(quantity)
+                    .unitPrice(product.getPrice())
+                    .build();
+            order.addItem(orderItem);
 
-        return orderRepository.save(order);
+            return orderRepository.save(order);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException("Product not found: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while creating the order: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -106,18 +106,11 @@ public class OrderService implements IOrderService {
     public BigDecimal getSubtotal(Long orderId) {
         Order order = getOrder(orderId);
 
-        return order.getSubTotal();
+        return order.getSubtotal();
     }
 
-    // might consider implementing this method via a query to avoid iterating over the items
-    // e.g. orderItemRepository.findByOrderIdAndProductId(orderId, productId)
     @Override
     public Optional<OrderItem> getOrderItem(Long orderId, Long productId) {
-        /* deprecated
-        return order.getItems().stream()
-                 .filter(item -> item.getProduct().getId().equals(productId))
-                 .findFirst();
-         */
         return orderItemRepository.findByOrderIdAndProductId(orderId, productId);
     }
 }

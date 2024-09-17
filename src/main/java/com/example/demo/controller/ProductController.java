@@ -9,22 +9,25 @@ import com.example.demo.request.AddProductRequest;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.service.order.IOrderService;
 import com.example.demo.service.product.IProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing products.
+ * Provides endpoints for adding, retrieving, updating, and deleting products.
+ */
 @RestController
 @RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
-    private IProductService productService;
-
-    @Autowired
-    private IOrderService orderService;
+    private final IProductService productService;
+    private final IOrderService orderService;
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<ProductDTO>> addProduct(@RequestBody AddProductRequest addProductRequest) {
@@ -53,10 +56,10 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductDTO>> updateProduct(@PathVariable Long id, @RequestBody AddProductRequest addProductRequest) {
+    @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<ApiResponse<ProductDTO>> updateProduct(@PathVariable Long id, @RequestBody JsonNode productPatch) {
         try {
-            Product product = productService.updateProduct(id, addProductRequest);
+            Product product = productService.updateProduct(id, productPatch);
             return ResponseEntity.ok(new ApiResponse<>("Product updated successfully", new ProductDTO(product)));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(e.getMessage(), null));

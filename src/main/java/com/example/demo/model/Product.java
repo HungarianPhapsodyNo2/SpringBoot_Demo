@@ -5,12 +5,17 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Entity representing a product.
+ * Contains product details such as name, price, and description.
+ */
+
+@Entity
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
 public class Product {
 
     @Id

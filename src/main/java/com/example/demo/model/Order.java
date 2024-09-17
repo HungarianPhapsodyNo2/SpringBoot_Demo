@@ -8,10 +8,15 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
+/**
+ * Entity representing an order.
+ * Contains order items and calculates the subtotal.
+ */
+
 @Entity
 @Table(name = "`order`")
+@Getter
+@Setter
 public class Order {
 
     @Id
@@ -22,22 +27,32 @@ public class Order {
     private Set<OrderItem> items;
 
     @Column(nullable = false)
-    private BigDecimal subTotal;
+    private BigDecimal subtotal;
 
     public Order() {
         this.items = new HashSet<>();
-        this.subTotal = BigDecimal.ZERO;
+        this.subtotal = BigDecimal.ZERO;
     }
 
+    /**
+     * Adds an item to the order and updates the subtotal.
+     *
+     * @param item the item to add
+     */
     public void addItem(OrderItem item) {
         this.items.add(item);
         item.setOrder(this);
-        this.subTotal = this.subTotal.add(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+        this.subtotal = this.subtotal.add(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
     }
 
+    /**
+     * Removes an item from the order and updates the subtotal.
+     *
+     * @param item the item to remove
+     */
     public void removeItem(OrderItem item) {
         this.items.remove(item);
         item.setOrder(null);
-        this.subTotal = this.subTotal.subtract(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+        this.subtotal = this.subtotal.subtract(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
     }
 }

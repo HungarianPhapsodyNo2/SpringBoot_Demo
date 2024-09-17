@@ -10,22 +10,24 @@ import com.example.demo.request.CheckOutShoppingCartRequest;
 import com.example.demo.response.ApiResponse;
 import com.example.demo.service.order.IOrderService;
 import com.example.demo.service.shopping_cart.IShoppingCartService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
+/**
+ * REST controller for managing shopping carts.
+ * Provides endpoints for creating, retrieving, updating, and deleting shopping carts and their items.
+ */
 @RestController
 @RequestMapping("/api/shopping_cart")
+@RequiredArgsConstructor
 public class ShoppingCartController {
 
-    @Autowired
-    private IShoppingCartService shoppingCartService;
-
-    @Autowired
-    private IOrderService orderService;
+    private final IShoppingCartService shoppingCartService;
+    private final IOrderService orderService;
 
     /**
      * This endpoint should not exist. It's here for demonstration purposes only.
@@ -78,7 +80,6 @@ public class ShoppingCartController {
             return ResponseEntity.badRequest().body(new ApiResponse<>(e.getMessage(), null));
         }
     }
-
 
     @GetMapping("/{id}/subtotal")
     public ResponseEntity<ApiResponse<BigDecimal>> getSubtotal(@PathVariable Long id) {
